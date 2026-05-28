@@ -1,0 +1,10 @@
+{
+  "name": "claude-toolshed-plugin",
+  "owner": { "name": "Ante Drnasin" },
+  "plugins": [
+    {
+      "name": "claude-toolshed-plugin",
+      "source": "./claude-toolshed-plugin"
+    }
+  ]
+}
