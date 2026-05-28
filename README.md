@@ -93,9 +93,9 @@ Three BurntToast events fire automatically:
 
 | Event | Notification |
 |---|---|
-| Claude Code waiting for input | "Claude Code čeka tvoj input" |
-| `codex-debate-partner` finishes | "Codex je završio analizu" |
-| `github-issue-implementor` finishes | "GitHub agent je završio implementaciju" |
+| Claude Code waiting for input | "Waiting for your input" |
+| `codex-debate-partner` finishes | "Codex has finished the analysis" |
+| `github-issue-implementor` finishes | "GitHub agent has finished the implementation" |
 
 ---
 

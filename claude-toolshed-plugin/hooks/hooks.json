@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -command \"Import-Module BurntToast; New-BurntToastNotification -Text 'Claude Code', 'Čeka tvoj input'\""
+            "command": "powershell -command \"Import-Module BurntToast; New-BurntToastNotification -Text 'Claude Code', 'Waiting for your input'\""
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -command \"Import-Module BurntToast; New-BurntToastNotification -Text 'Claude Code', 'Codex je završio analizu'\""
+            "command": "powershell -command \"Import-Module BurntToast; New-BurntToastNotification -Text 'Claude Code', 'Codex has finished the analysis'\""
           }
         ]
       },
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -command \"Import-Module BurntToast; New-BurntToastNotification -Text 'Claude Code', 'GitHub agent je završio implementaciju'\""
+            "command": "powershell -command \"Import-Module BurntToast; New-BurntToastNotification -Text 'Claude Code', 'GitHub agent has finished the implementation'\""
           }
         ]
       }
