@@ -1,0 +1,35 @@
+{
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -command \"Import-Module BurntToast; New-BurntToastNotification -Text 'Claude Code', 'Čeka tvoj input'\""
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "codex-debate-partner",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -command \"Import-Module BurntToast; New-BurntToastNotification -Text 'Claude Code', 'Codex je završio analizu'\""
+          }
+        ]
+      },
+      {
+        "matcher": "github-issue-implementor",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -command \"Import-Module BurntToast; New-BurntToastNotification -Text 'Claude Code', 'GitHub agent je završio implementaciju'\""
+          }
+        ]
+      }
+    ]
+  }
+}

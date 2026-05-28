@@ -1,0 +1,12 @@
+{
+  "name": "claude-toolshed-plugin",
+  "version": "1.0.0",
+  "description": "Claude Code workflow plugin — Codex debate partner, GitHub issue implementor, hooks i komande",
+  "author": {
+    "name": "Ante Drnasin",
+    "url": "https://github.com/drnasin"
+  },
+  "repository": "https://github.com/drnasin/claude-toolshed-plugin",
+  "license": "MIT",
+  "keywords": ["laravel", "php", "codex", "debate", "workflow", "hooks"]
+}
