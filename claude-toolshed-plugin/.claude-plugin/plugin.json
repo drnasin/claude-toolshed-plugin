@@ -1,6 +1,6 @@
 {
   "name": "claude-toolshed-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Claude Code workflow plugin — Codex debate partner, GitHub issue implementor, hooks i komande",
   "author": {
     "name": "Ante Drnasin",
