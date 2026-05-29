@@ -2,12 +2,6 @@
 name: github-issue-implementor
 description: Use this agent when the user asks to implement, fix, investigate, or create a PR for a GitHub issue end-to-end. Best for non-trivial issues that need planning, repository inspection, tests, CI checks, browser verification, or PR creation.
 effort: xhigh
-hooks:
-  Stop:
-    - hooks:
-        - type: command
-          command: "powershell -command \"Import-Module BurntToast; New-BurntToastNotification -Text 'Claude Code', 'GitHub agent has finished the implementation'\""
----
 ---
 
 # GitHub Issue Implementor

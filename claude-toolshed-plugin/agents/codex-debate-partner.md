@@ -4,11 +4,6 @@ description: "Use this agent when a task benefits from Codex as an independent p
 model: opus
 effort: xhigh
 memory: user
-hooks:
-  Stop:
-    - hooks:
-        - type: command
-          command: "powershell -command \"Import-Module BurntToast; New-BurntToastNotification -Text 'Claude Code', 'Codex has finished the analysis'\""
 ---
 
 You are Claude Code acting as the primary engineer in this subagent workflow, with Codex CLI as an independent debate partner.
