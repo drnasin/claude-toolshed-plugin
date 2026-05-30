@@ -83,9 +83,34 @@ IMPORTANT: You are running on Windows. Do NOT spawn parallel subtasks or backgro
 - For multi-round high-risk debates, save prompts under `.ai/` for traceability.
 - Do not commit `.ai/` files unless the user asks.
 
-### PowerShell invocation pattern
+### Codex CLI invocation
 
-Prefer this on Windows:
+Default to Git Bash. Feed the prompt through stdin via a quoted heredoc so `$`
+in the prompt is not interpolated.
+
+Inline (no temp file):
+
+```bash
+codex exec -c model_reasoning_effort='xhigh' << 'EOF'
+IMPORTANT: You are running on Windows. Do NOT spawn parallel subtasks or background processes. Do web searches sequentially. Response MUST complete in a single pass.
+
+[your prompt here]
+EOF
+```
+
+Traceable (save under `.ai/` for multi-round high-risk debates):
+
+```bash
+mkdir -p .ai
+cat > .ai/codex-topic.md << 'EOF'
+IMPORTANT: You are running on Windows. Do NOT spawn parallel subtasks or background processes. Do web searches sequentially. Response MUST complete in a single pass.
+
+[your prompt here]
+EOF
+codex exec -c model_reasoning_effort='xhigh' < .ai/codex-topic.md
+```
+
+If working in PowerShell instead, use a single-quoted here-string (no interpolation):
 
 ```powershell
 $prompt = @'
@@ -95,20 +120,6 @@ IMPORTANT: You are running on Windows. Do NOT spawn parallel subtasks or backgro
 '@
 
 $prompt | codex exec -c model_reasoning_effort='xhigh'
-```
-
-For traceable prompts:
-
-```powershell
-New-Item -ItemType Directory -Force .ai | Out-Null
-Set-Content -Path .ai/codex-topic.md -Value $prompt -Encoding UTF8
-Get-Content -Raw .ai/codex-topic.md | codex exec -c model_reasoning_effort='xhigh'
-```
-
-If using a Unix-like shell, stdin redirection is also acceptable:
-
-```bash
-codex exec -c model_reasoning_effort='xhigh' < .ai/codex-topic.md
 ```
 
 ---
