@@ -179,32 +179,43 @@ validation, or persistence correctness.
 
 ### Full test suite strategy
 
-Do not run the full local test suite when it is known to be slow unless explicitly requested or CI is unavailable.
+For large projects where the full local test suite is slow on Windows, do not run
+the full suite locally unless explicitly requested or CI is unavailable.
 
 Use local checks for:
 - focused feature tests
-- related tests
+- related regression tests
 - fast static checks
-- reproduction/regression checks
+- reproduction checks
 - frontend build or browser verification when relevant
 
-Use GitHub Actions for:
-- full test suite verification
-- final quality gate before PR readiness
+Use GitHub Actions as the full-suite quality gate.
 
-After focused local verification passes, push the feature branch and open a PR into `develop`.
+After focused local verification passes:
+1. push the feature branch,
+2. open or update the PR,
+3. inspect the relevant GitHub Actions run with `gh`,
+4. watch the run when practical,
+5. report whether CI passed, failed, is still running, or was not found.
 
-Use the PR-triggered GitHub Actions run as the full-suite gate.
+If the repository has a known slow local suite, prefer PR-triggered GitHub Actions
+for the full test suite even when local full-suite execution is technically possible.
+
+Use the PR-triggered GitHub Actions run as the final full-suite gate.
 
 Do not rely on feature-branch push CI unless the repository explicitly has CI configured for feature branches.
 
-If CI is unavailable or not triggered, report that explicitly and treat local checks as the available gate.
+If CI is unavailable or not triggered, report that explicitly and treat focused local checks as the available gate.
+
+Do not claim the work is complete until the required GitHub Actions run has passed.
+If CI is still running, failed, or unavailable, report the exact status and stop before merge.
 
 If CI fails:
-- inspect failed logs with `gh`
-- make scoped fixes only
-- push again
-- re-check CI
+- inspect failed logs with `gh`,
+- identify the failing job/test,
+- make scoped fixes only when the failure is related to the current change,
+- push again,
+- re-check CI.
 
 After two failed CI repair attempts, stop, summarize the remaining failure, and ask for direction.
 
