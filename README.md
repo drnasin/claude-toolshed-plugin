@@ -48,7 +48,7 @@ Runs on **Opus** at **xhigh** effort.
 issue analysis → risk assessment → plan
   → feature branch → implementation → tests
   → Codex review (proportional to risk) → commit
-  → CI check → PR into develop → stop (no auto-merge)
+  → PR into develop → Playwright check → green CI → merge
 ```
 
 **Risk-based behaviour:**
@@ -62,7 +62,7 @@ issue analysis → risk assessment → plan
 - Existing public API response shape is never silently changed
 - Destructive operations have an explicit rollback path
 
-Playwright verification runs for any UI-affecting changes. GitHub Actions CI is checked after push; failures are diagnosed and fixed before the PR is declared done.
+Playwright verification runs for browser-testable changes. GitHub Actions CI is checked after the PR opens; when Playwright and CI are green, the agent merges the PR into `develop`.
 
 Adapts model automatically: Sonnet for low/medium risk, escalates to Opus for high risk, migrations, and architecture work.
 

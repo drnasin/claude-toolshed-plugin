@@ -112,7 +112,7 @@ When the user asks to implement, fix, or create a PR:
 9. Implement the smallest safe diff.
 10. Add or update focused tests for every behavior change unless the change is purely copy, styling, formatting, or test infrastructure. If tests are not added, explicitly explain why.
 11. Run relevant local checks from project docs/package scripts/CI config.
-12. Use Playwright verification only when UI runtime behavior is affected.
+12. Run `playwright-cli` browser verification for the changed user workflow whenever the repository exposes a browser-testable app or UI surface. If there is no browser-testable surface, or the app cannot be served safely in the current environment, report that and stop before merge.
 13. For warranted medium-risk or high-risk work, ask `codex-debate-partner` to review the diff before commit/PR.
 14. Fix accepted findings and rerun focused checks.
 15. Commit with a clear English commit message.
@@ -120,7 +120,8 @@ When the user asks to implement, fix, or create a PR:
 17. Open a PR into `develop` unless the user specifies another target branch.
 18. Check GitHub Actions / CI with `gh`.
 19. If CI fails, inspect logs and attempt scoped fixes. After two failed repair attempts, stop and summarize.
-20. Stop before merge and wait for user approval.
+20. Wait for the PR-triggered GitHub Actions run to pass. If CI is still running, keep monitoring when practical; otherwise report the exact status and stop.
+21. If CI is green and required local checks plus `playwright-cli` verification passed, merge the PR into `develop`. Prefer the repository's normal merge method when it is evident from existing PR history or branch protection; otherwise use the default GitHub merge method.
 
 Do not claim the work is complete if CI is failing or still running. Report the exact status.
 
@@ -144,8 +145,8 @@ Default branch name format:
 Do not invent ticket IDs. Use only IDs found in the issue or repository context.
 
 Do not commit directly to `develop` or `main` unless explicitly requested.
-Do not merge PRs without explicit user approval.
-Stop before merge.
+Do not merge PRs until the required local checks, `playwright-cli` verification, and PR-triggered GitHub Actions run have passed.
+If the current request explicitly asks to stop before merge, honor that request.
 
 ---
 
@@ -194,9 +195,10 @@ Use GitHub Actions as the full-suite quality gate.
 After focused local verification passes:
 1. push the feature branch,
 2. open or update the PR,
-3. inspect the relevant GitHub Actions run with `gh`,
-4. watch the run when practical,
-5. report whether CI passed, failed, is still running, or was not found.
+3. run `playwright-cli` verification for the changed browser workflow when a browser-testable surface exists,
+4. inspect the relevant GitHub Actions run with `gh`,
+5. watch the run when practical,
+6. report whether CI passed, failed, is still running, or was not found.
 
 If the repository has a known slow local suite, prefer PR-triggered GitHub Actions
 for the full test suite even when local full-suite execution is technically possible.
@@ -209,6 +211,8 @@ If CI is unavailable or not triggered, report that explicitly and treat focused 
 
 Do not claim the work is complete until the required GitHub Actions run has passed.
 If CI is still running, failed, or unavailable, report the exact status and stop before merge.
+If `playwright-cli` verification is required but fails or cannot run, report the exact failure and stop before merge.
+If CI is green and required `playwright-cli` verification passed, merge the PR into `develop`.
 
 If CI fails:
 - inspect failed logs with `gh`,
@@ -229,7 +233,7 @@ When opening the PR, include:
 - Issue reference
 - Changed files/areas
 - Tests/checks run
-- Playwright verification, if used
+- Playwright verification status
 - Risk level
 - Codex review result, if used
 - Known risks / edge cases
@@ -240,6 +244,7 @@ After opening the PR, report:
 - PR URL
 - CI status
 - whether anything is still running/failing
-- that merge is waiting for user approval
+- Playwright verification status
+- merge status, including the target branch when merged
 
 Keep PR descriptions concise and evidence-based.
