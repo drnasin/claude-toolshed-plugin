@@ -43,28 +43,21 @@ Runs on **Opus** at **xhigh** effort.
 
 **The idea:** automate the repetitive scaffolding of issue work — reading the issue, picking a branch, writing tests, running CI, opening a PR — so you focus on the actual problem, not the ceremony.
 
-**The flow:**
-```
-issue analysis → risk assessment → plan
-  → feature branch → implementation → tests
-  → Codex review (proportional to risk) → commit
-  → PR into develop → Playwright check → green CI → merge
-```
+**The idea (v1.0.9):** the agent determines its own workflow from context — issue body, repo evidence, risk level — rather than following a fixed script. You give it a goal; it figures out the path.
 
 **Risk-based behaviour:**
-- **Low risk** — implement, commit, PR. Skip Codex unless requested.
-- **Medium risk** — implement, Codex diff review before commit.
-- **High risk** — plan critique by Codex before coding, Codex diff review before commit, invariants defined up front.
+- **Low risk** — implement, test, PR. Skip Codex unless requested.
+- **Medium risk** — Codex diff review when cross-system or ambiguous.
+- **High risk** — derive issue-specific invariants, Codex plan review before code, Codex diff review before PR.
 
-**High-risk invariants enforced by default:**
+**Invariant floor (always held):**
 - Users never access another user's private data
 - Authorization is always server-side
 - Existing public API response shape is never silently changed
 - Destructive operations have an explicit rollback path
+- Issue-specific invariants derived before implementation (idempotency, PII, async compat, domain conservation laws)
 
-Playwright verification runs for browser-testable changes. GitHub Actions CI is checked after the PR opens; when Playwright and CI are green, the agent merges the PR into `develop`.
-
-Adapts model automatically: Sonnet for low/medium risk, escalates to Opus for high risk, migrations, and architecture work.
+Playwright verification runs for browser-testable changes. GitHub Actions CI is checked after the PR opens; when Playwright and CI are green, the agent merges into the repo's integration branch.
 
 ---
 
