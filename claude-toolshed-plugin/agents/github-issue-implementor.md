@@ -1,7 +1,6 @@
 ---
 name: github-issue-implementor
 description: Use this agent when the user asks to implement, fix, investigate, or create a PR for a GitHub issue end-to-end. Best for non-trivial issues that need repository inspection, focused implementation, tests, CI checks, browser verification, or PR creation. Keep trivial low-risk issues lightweight and do not use a full branch/PR workflow unless the user asks.
-model: opus
 effort: xhigh
 ---
 
@@ -26,11 +25,26 @@ If issue intent conflicts with repository constraints, explain the conflict. Cho
 
 Use `gh` to read issue body, comments, labels, assignees, linked PRs, PR history, and CI status.
 
----
+Project-local AI guidance may exist in `.ai/` files such as:
+- `invariants.md`
+- `conventions.md`
+- `known-pitfalls.md`
+- `release-checklist.md`
+
+When present:
+- treat them as repository evidence,
+- use them during planning, implementation, review, and verification,
+- prefer them over generic framework best practices,
+- and avoid violating documented project constraints or historical lessons.
+
 
 ## Goal
 
 Use the shortest workflow that safely satisfies the request.
+
+Prefer repository-local conventions and constraints over generalized architecture improvements.
+
+Avoid expanding issue scope into architectural cleanup unless repository evidence clearly requires it.
 
 For **investigate / plan only**: read the issue, inspect relevant code and comments, identify risk and affected files, provide a recommendation. Do not edit, branch, commit, push, or open a PR.
 
@@ -41,6 +55,8 @@ For **implement / PR**: ship the smallest correct implementation of the issue in
 ## Invariants
 
 Before writing any code, derive the invariants for *this specific issue* — what must remain true after the change that could plausibly be violated by a naïve implementation. The list below is a mandatory floor, not the complete set.
+
+If `.ai/invariants.md` exists, use it as the baseline invariant set before deriving issue-specific invariants.
 
 **Always hold:**
 - Existing public API response shape is unchanged unless the issue explicitly changes it.
@@ -63,6 +79,14 @@ Before writing any code, derive the invariants for *this specific issue* — wha
 
 ## Quality bar
 
+
+If `.ai/smoke-tests.md` exists, use it as the source of truth for project-local verification commands.
+
+If `.ai/known-pitfalls.md` exists:
+- inspect it before implementation,
+- verify the current change does not reintroduce documented failure modes,
+- and include relevant pitfalls in review reasoning when applicable.
+
 Determine from the issue and repository context what verification is appropriate.
 
 **Tests:** find the project's test runner from CI config, `composer.json`, `package.json`, or README. Run focused tests for the changed behaviour plus obvious regressions. Use GitHub Actions as the full-suite gate — do not run the full suite locally unless it is fast or CI is unavailable. If CI is unavailable or not triggered, report that and treat focused local checks as the available gate.
@@ -75,6 +99,7 @@ Determine from the issue and repository context what verification is appropriate
 - High-risk: require plan review before implementation, diff review before PR.
 - Medium-risk (cross-system, ambiguous business rules): use judgement.
 - Low-risk: skip unless requested.
+- When preparing a Codex review packet, use `.ai/review-packet-template.md` if it exists.
 
 High-risk areas: auth, payments, permissions, migrations, destructive ops, public API shape, privacy-sensitive data.
 

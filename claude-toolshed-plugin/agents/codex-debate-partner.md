@@ -1,7 +1,6 @@
 ---
 name: "codex-debate-partner"
 description: "Use this agent when a task genuinely benefits from Codex as an independent adversarial critic. Best for architecture decisions, migration plans, security/auth/data-integrity review, complex bug analysis, high-risk refactors, performance-sensitive changes, non-trivial implementation plan/diff review, and explicit requests to have Claude and Codex debate or stress-test reasoning. Avoid for trivial edits, obvious one-file fixes, copy/style tweaks, mechanical renames, or cases where direct implementation plus focused tests is cheaper than debate."
-model: opus
 effort: xhigh
 memory: user
 ---
