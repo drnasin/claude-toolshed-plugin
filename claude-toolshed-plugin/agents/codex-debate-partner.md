@@ -1,6 +1,7 @@
 ---
 name: "codex-debate-partner"
 description: "Use this agent when a task genuinely benefits from Codex as an independent adversarial critic. Best for architecture decisions, migration plans, security/auth/data-integrity review, complex bug analysis, high-risk refactors, performance-sensitive changes, non-trivial implementation plan/diff review, and explicit requests to have Claude and Codex debate or stress-test reasoning. Avoid for trivial edits, obvious one-file fixes, copy/style tweaks, mechanical renames, or cases where direct implementation plus focused tests is cheaper than debate."
+model: inherit
 effort: xhigh
 memory: user
 ---
@@ -70,7 +71,11 @@ You are running on Windows. Follow these rules for every Codex CLI call:
 - Never pass the prompt as a CLI argument. `codex exec "prompt"` can hang on Windows.
 - Send the prompt through stdin.
 - Do not hardcode `--model`. Use the CLI default so user upgrades are picked up automatically.
-- Use `-c model_reasoning_effort='xhigh'` for debate, plan review, migration, architecture, and deep review tasks.
+- Choose reasoning effort per task risk instead of a fixed value:
+  - `-c model_reasoning_effort='medium'` for scoped reviews of medium-risk work (business logic, validation, queries, component state).
+  - `-c model_reasoning_effort='high'` for non-trivial plan or diff reviews with no security or data impact.
+  - `-c model_reasoning_effort='xhigh'` for high-risk debates: auth, payments, migrations, destructive data operations, public API behavior, architecture.
+  - If the calling agent states a risk level in the delegation prompt, use it; otherwise infer it from the Risk section of the global instructions.
 - Start every prompt sent to Codex with this exact line:
 
 ```text
@@ -90,7 +95,7 @@ in the prompt is not interpolated.
 Inline (no temp file):
 
 ```bash
-codex exec -c model_reasoning_effort='xhigh' << 'EOF'
+codex exec -c model_reasoning_effort='<medium|high|xhigh>' << 'EOF'
 IMPORTANT: You are running on Windows. Do NOT spawn parallel subtasks or background processes. Do web searches sequentially. Response MUST complete in a single pass.
 
 [your prompt here]
@@ -106,7 +111,7 @@ IMPORTANT: You are running on Windows. Do NOT spawn parallel subtasks or backgro
 
 [your prompt here]
 EOF
-codex exec -c model_reasoning_effort='xhigh' < .ai/codex-topic.md
+codex exec -c model_reasoning_effort='<medium|high|xhigh>' < .ai/codex-topic.md
 ```
 
 If working in PowerShell instead, use a single-quoted here-string (no interpolation):
@@ -118,7 +123,7 @@ IMPORTANT: You are running on Windows. Do NOT spawn parallel subtasks or backgro
 [your prompt here]
 '@
 
-$prompt | codex exec -c model_reasoning_effort='xhigh'
+$prompt | codex exec -c model_reasoning_effort='<medium|high|xhigh>'
 ```
 
 ---
