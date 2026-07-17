@@ -8,19 +8,10 @@ $ARGUMENTS
 
 Prije planiranja i implementacije obavezno provjeri postoji li project-local AI context:
 
-- `.ai/invariants.md`
-- `.ai/conventions.md`
-- `.ai/known-pitfalls.md`
-- `.ai/release-checklist.md`
-- `.ai/review-packet-template.md`
-- `.ai/smoke-tests.md`
-
-Koristi te fileove kao repository evidence za:
-- scope control
-- invariants
-- known pitfalls
-- verification commands
-- review packet
-- release/rollback caution
+- pregledaj relevantne datoteke u `.ai/` direktoriju ako postoji
+- tretiraj samo potvrđeni, ne-placeholder sadržaj kao repository evidence
+- slijedi pravila agenta za project map, conventions, invariants, pitfalls, regressions, verification, browser flows, review i release checks
 
 Ne širi scope izvan issuea osim ako repository evidence jasno pokazuje da je nužno.
+
+Ova komanda ne odobrava merge sama po sebi. Mergeaj samo ako je to izričito navedeno u `$ARGUMENTS` ili ga korisnik naknadno odobri.

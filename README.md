@@ -1,137 +1,114 @@
 # claude-toolshed-plugin
 
-A [Claude Code](https://claude.ai/code) plugin that wires two high-leverage development workflows into your IDE: an adversarial code-review partner powered by Codex CLI, and an end-to-end GitHub issue implementor. Ships with Windows toast notification hooks so you know when the agents finish without watching the terminal.
+A Claude Code workflow plugin for adversarial Codex review and evidence-based GitHub issue implementation.
 
----
-
-## What's inside
+## Components
 
 | Component | Type | Purpose |
-|---|---|---|
-| `codex-debate-partner` | Agent | Claude + Codex adversarial planning & review |
-| `github-issue-implementor` | Agent | Full issue → branch → code → tests → CI → PR flow |
-| `/debate` | Slash command | Launch the debate agent from the prompt |
-| `/issue` | Slash command | Launch the issue implementor from the prompt |
-| `hooks.json` | Hooks | BurntToast desktop notifications on agent events |
+| --- | --- | --- |
+| `codex-debate-partner` | Agent | Uses Codex CLI as an independent adversarial critic for non-trivial plans and diffs |
+| `github-issue-implementor` | Agent | Runs a risk-based issue → implementation → verification → PR workflow |
+| `/debate` | Command | Starts the adversarial review agent |
+| `/ghissue` | Command | Starts the GitHub issue implementor |
 
----
+## GitHub Issue Workflow
 
-## Agents
+`github-issue-implementor` derives the shortest safe workflow from the issue, repository evidence, and risk:
 
-### codex-debate-partner
+- **Low risk:** focused implementation and verification; Codex review is optional unless requested.
+- **Medium risk:** Codex review when business rules are ambiguous or the change crosses systems.
+- **High risk:** issue-specific invariants and Codex plan review before code, then Codex diff review before PR.
 
-**The idea:** every non-trivial plan has blind spots. This agent forces two independent perspectives — Claude forms its own position from repository evidence, then runs Codex CLI as an adversarial critic (not a collaborator). Codex is explicitly told to *attack* assumptions, not improve the plan. The agent then reconciles the disagreements against primary-source evidence.
+When a repository contains `.ai/`, the agent uses confirmed project-local guidance for orientation, conventions, invariants, known pitfalls, regressions, smoke tests, browser flows, review packets, and release checks. Placeholders and example commands are not treated as repository facts.
 
-**Best used for:**
-- Architecture decisions and design trade-offs
-- Migration plans (database, framework, API)
-- Refactor strategy on complex modules
-- Security and authorization design
-- Pre-implementation plan critique
+The workflow may create a branch, commit, push, and open a PR when implementation is requested. It does not merge merely because `/ghissue` was invoked. Merge requires an explicit request or later user approval, green required CI, and successful required verification.
 
-**How it works:**
-1. Claude reads the repository and forms an independent position
-2. Codex CLI runs with an adversarial prompt — it must find unsafe, incomplete, over-scoped, or incorrect assumptions
-3. Up to 3 debate rounds; each disagreement is resolved against code/docs/tests
-4. Output: a concrete recommendation with stated trade-offs and rejected alternatives
+## Codex Debate Workflow
 
-Runs on **Opus** at **xhigh** effort.
+`codex-debate-partner` keeps Claude as the primary engineer and uses Codex CLI as a read-only critic. It defaults to one focused critique round and permits additional rounds only for material unresolved disagreements.
 
----
+The Claude model is inherited from the current session. Codex reasoning effort is selected by risk:
 
-### github-issue-implementor
+- `medium` for scoped medium-risk reviews;
+- `high` for non-trivial reviews without security or data impact;
+- `xhigh` for auth, payments, migrations, destructive operations, public APIs, and architecture.
 
-**The idea:** automate the repetitive scaffolding of issue work — reading the issue, picking a branch, writing tests, running CI, opening a PR — so you focus on the actual problem, not the ceremony.
+Repository evidence, tests, runtime behavior, and official documentation outrank both models.
 
-**The idea (v1.0.9):** the agent determines its own workflow from context — issue body, repo evidence, risk level — rather than following a fixed script. You give it a goal; it figures out the path.
+## Commands
 
-**Risk-based behaviour:**
-- **Low risk** — implement, test, PR. Skip Codex unless requested.
-- **Medium risk** — Codex diff review when cross-system or ambiguous.
-- **High risk** — derive issue-specific invariants, Codex plan review before code, Codex diff review before PR.
-
-**Invariant floor (always held):**
-- Users never access another user's private data
-- Authorization is always server-side
-- Existing public API response shape is never silently changed
-- Destructive operations have an explicit rollback path
-- Issue-specific invariants derived before implementation (idempotency, PII, async compat, domain conservation laws)
-
-Playwright verification runs for browser-testable changes. GitHub Actions CI is checked after the PR opens; when Playwright and CI are green, the agent merges into the repo's integration branch.
-
----
-
-## Slash commands
-
-```
-/debate <topic or plan>
-/issue <issue-number>
+```text
+/debate <topic, plan, or diff review request>
+/ghissue <issue number, URL, or instruction>
 ```
 
-Both commands simply launch the matching agent with whatever arguments you pass. You can use them with a GitHub issue number, a free-text description, or a URL.
+Examples:
 
-**Examples:**
+```text
+/debate review this migration plan before implementation
+/ghissue 42
+/ghissue 23 — investigate only
+/ghissue 57 — implement and merge after required checks pass
 ```
-/debate should this service use the strategy pattern?
-/debate review my migration plan before I code it
-/issue 42
-/issue 23 — focus on the auth part only
-```
-
----
-
-## Notification hooks
-
-Three BurntToast events fire automatically:
-
-| Event | Notification |
-|---|---|
-| Claude Code waiting for input | "Waiting for your input" |
-| `codex-debate-partner` finishes | "Codex has finished the analysis" |
-| `github-issue-implementor` finishes | "GitHub agent has finished the implementation" |
-
----
 
 ## Prerequisites
 
-- [Claude Code](https://claude.ai/code) CLI installed
-- [Codex CLI](https://github.com/openai/codex) installed and in PATH
-- [BurntToast](https://github.com/Windos/BurntToast) PowerShell module (for notifications)
-
-```powershell
-Install-Module -Name BurntToast -Scope CurrentUser -Force
-```
-
----
+- Claude Code CLI
+- Codex CLI in `PATH` for adversarial review
+- GitHub CLI (`gh`) for issue, PR, and CI operations
+- Repository-specific test, analysis, build, and browser tools when required by the change
 
 ## Installation
 
+Add the marketplace once:
+
 ```bash
-claude plugin install https://github.com/drnasin/claude-toolshed-plugin
+claude plugin marketplace add https://github.com/drnasin/claude-toolshed-plugin
 ```
 
----
+Install the plugin:
 
-## Repository layout
-
+```bash
+claude plugin install claude-toolshed-plugin@claude-toolshed-plugin
 ```
-claude-toolshed-plugin/          # plugin package root
+
+After a published update:
+
+```bash
+claude plugin update claude-toolshed-plugin@claude-toolshed-plugin
+```
+
+Restart Claude Code after installing or updating so the new agent and command definitions are loaded.
+
+## Repository Layout
+
+```text
+.
 ├── .claude-plugin/
-│   └── plugin.json              # plugin manifest
-├── agents/
-│   ├── codex-debate-partner.md  # debate agent definition
-│   └── github-issue-implementor.md
-├── commands/
-│   ├── debate.md                # /debate command
-│   └── issue.md                 # /issue command
-└── hooks/
-    └── hooks.json               # notification hooks
+│   └── marketplace.json
+├── README.md
+└── claude-toolshed-plugin/
+    ├── .claude-plugin/
+    │   └── plugin.json
+    ├── agents/
+    │   ├── codex-debate-partner.md
+    │   └── github-issue-implementor.md
+    └── commands/
+        ├── debate.md
+        └── ghissue.md
 ```
 
----
+## Local Validation
+
+From the repository root:
+
+```bash
+claude plugin validate ./claude-toolshed-plugin
+claude plugin details claude-toolshed-plugin@claude-toolshed-plugin
+```
+
+The first command validates the local source. The second inspects the currently available marketplace version, which may differ until local changes are committed, pushed, and published.
 
 ## License
 
-MIT — see [LICENSE](LICENSE) if present, otherwise use freely.
-
-Author: [Ante Drnasin](https://github.com/drnasin)
+MIT, as declared in the plugin manifest.
