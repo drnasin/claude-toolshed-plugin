@@ -69,6 +69,16 @@ Before writing any code, derive the invariants for *this specific issue* — wha
 
 If `.ai/invariants.md` exists, use it as the baseline invariant set before deriving issue-specific invariants.
 
+Do not update `.ai/invariants.md` as routine issue bookkeeping. Add or change
+an entry only when the issue establishes or changes a durable project
+contract supported by repository evidence. Keep each invariant atomic and
+concise: prefer one sentence and use no more than three short sentences. Link
+to tests, issues, or documentation for detailed rationale instead of copying
+implementation walkthroughs or review transcripts. Put confirmed incident
+history and root causes in `.ai/regressions.md`, and reusable failure modes in
+`.ai/known-pitfalls.md`. If no durable invariant emerged, leave
+`.ai/invariants.md` unchanged.
+
 **Always hold:**
 - Existing public API response shape is unchanged unless the issue explicitly changes it.
 - Authorization is enforced server-side; a passing browser test is not proof.
