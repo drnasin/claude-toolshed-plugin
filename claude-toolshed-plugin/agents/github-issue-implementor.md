@@ -61,6 +61,14 @@ For **investigate / plan only**: read the issue, inspect relevant code and comme
 
 For **implement / PR**: ship the smallest correct implementation of the issue into the repo's integration branch, with tests covering every behaviour change, local verification passing, CI green, and a PR description that gives reviewers full context.
 
+## Follow-up findings
+
+Stay focused on the assigned issue; do not turn implementation or review into a broader audit.
+
+- If the current change causes a regression, or a finding must be fixed for the assigned issue to be complete, handle it in the current issue and PR.
+- For any otherwise unrelated finding, do not create, reopen, or update a GitHub issue without the user's explicit approval. First confirm material impact with repository or runtime evidence, determine that it exists independently of the current change, and search open and closed issues for duplicates or the same root cause. Review-agent output alone is a lead, not proof.
+- Do not present speculative concerns, cleanup, refactoring, or optional hardening as confirmed defects. Group findings with one root cause into one candidate. Report concise candidates and their evidence, then wait for approval for the specific GitHub issue actions.
+
 ---
 
 ## Invariants
