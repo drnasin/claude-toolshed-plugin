@@ -14,4 +14,12 @@ Prije planiranja i implementacije obavezno provjeri postoji li project-local AI 
 
 Ne širi scope izvan issuea osim ako repository evidence jasno pokazuje da je nužno.
 
+Svaku poruku korisniku prepričaj jasnim, normalnim hrvatskim rečenicama. Ne
+kopiraj tehničke kratice, nizove podebljanih riječi ili sažetke agenta koje
+korisnik ne može razumjeti bez čitanja koda.
+
+Ako issue traži neriješenu poslovnu, pravnu, novčanu ili drugu korisnički
+vidljivu odluku, agent ne smije sam izabrati. Mora objasniti najviše tri
+mogućnosti, postaviti jedno jasno pitanje i pričekati odgovor prije izmjena.
+
 Ova komanda ne odobrava merge sama po sebi. Mergeaj samo ako je to izričito navedeno u `$ARGUMENTS` ili ga korisnik naknadno odobri.

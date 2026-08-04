@@ -23,16 +23,32 @@ final report in clear, natural Croatian. Do not relay raw wording from source
 code, invariants, review agents, or internal notes when it would be difficult
 for the user to understand.
 
-- Use complete sentences with one main idea each. State what will change, how
-  it works, and why it matters in practice.
-- Concise means omitting irrelevant detail, not compressing several ideas into
-  dense expert shorthand.
-- Avoid Croatian-English hybrids and unexplained expressions such as "repo
-  claim idiom", "atomic conditional UPDATE", or "lock-ordering invariant".
-  Keep exact identifiers when useful, then explain the underlying behavior in
-  plain Croatian.
+- Assume the user has not read the code, issue discussion, invariants, or
+  internal review. State the practical meaning first: what happens to the user
+  or system, why it matters, and whether the user must decide or do anything.
+- Use complete sentences with one main idea each. If a sentence contains more
+  than one decision or more than one unfamiliar technical term, split and
+  rewrite it.
+- Prefer ordinary Croatian descriptions such as "povrat novca", "besplatno
+  otvaranje drugog kontakta", and "trajno zatvaranje zapisa" over unexplained
+  hybrids such as "refund", "lead credit", "fresh unlock", or "terminal state".
+  Keep an exact identifier only when it helps, and explain it immediately.
+- Do not use `+`, `/`, arrows, slash-separated fragments, bolded individual
+  words, or bolded whole sentences as substitutes for normal prose. Use
+  emphasis sparingly and only for a short heading or a genuinely important
+  conclusion.
 - Rewrite subagent and review output before showing it to the user. Never paste
   internal shorthand verbatim merely because it is technically accurate.
+
+Before sending any user-visible message, perform this mandatory check:
+
+1. Could the user understand it without opening the repository?
+2. Are all unavoidable technical terms explained in the same sentence?
+3. Is every proposed decision clearly separated from verified facts?
+4. Is the wording made of normal sentences rather than compressed notation?
+
+If any answer is no, rewrite the message before sending it. Concise means
+omitting irrelevant detail, never making the explanation harder to understand.
 
 ---
 
@@ -41,7 +57,11 @@ for the user to understand.
 The issue body, comments, labels, linked PRs, and acceptance criteria define the goal.
 Repository evidence (code, tests, CI config, CLAUDE.md, and confirmed project-local guidance) defines the safe implementation path.
 
-If issue intent conflicts with repository constraints, explain the conflict. Choose the safer path, or ask the user when it materially changes scope.
+If issue intent conflicts with repository constraints, explain the conflict.
+When the conflict is purely technical and does not change intended business
+behaviour, choose the safer repository-consistent path. If resolving it would
+change scope or business, legal, privacy, or monetary policy, ask the user and
+stop before implementation.
 
 Use `gh` to read issue body, comments, labels, assignees, linked PRs, PR history, and CI status.
 
@@ -68,6 +88,32 @@ Treat labels as routing hints, not as a substitute for independent risk assessme
 - `risk:high`, `risk:medium`, and `risk:low` set the expected workflow floor; raise the risk level when repository evidence requires it.
 - `needs:playwright`, `needs:codex-review`, and `needs:manual-verification` make the corresponding check required when it can be performed safely.
 - Domain labels such as `auth`, `security`, `migration`, `api-contract`, `payments`, `queues`, `uploads`, and `livewire` identify areas whose relevant invariants and failure modes need focused review.
+
+## Unresolved decisions are hard stops
+
+Before planning or implementation, identify whether the issue still requires a
+product, legal, policy, pricing, payment, refund, credit, retention, or other
+user-visible business decision. Strong signals include a `question` label,
+phrases such as "needs decision" or "decide policy", multiple proposed options,
+or acceptance criteria that do not select one outcome.
+
+If repository evidence and the user's current request do not already contain an
+accepted decision:
+
+- do not select an option on the user's behalf,
+- do not treat the technically easiest option as the product decision,
+- explain the unresolved choice in plain Croatian,
+- present at most three concrete options with their practical consequences,
+- label any preferred option as a recommendation, never as the agent's
+  decision,
+- ask one focused question, then wait for the user's answer before editing,
+  branching, committing, pushing, or opening a PR.
+
+For example, never independently choose between returning money, granting a
+credit, or providing no compensation. Existing code that supports one option
+is implementation evidence, not authorization to choose that option. A purely
+technical uncertainty that does not change user-facing or business behaviour
+may still be resolved with the simplest repository-consistent implementation.
 
 ## Goal
 
@@ -148,7 +194,9 @@ Determine from the issue and repository context what verification is appropriate
 
 **Codex review** — use `codex-debate-partner`; do not invoke `codex` directly:
 - High-risk: require plan review before implementation, diff review before PR.
-- Medium-risk (cross-system, ambiguous business rules): use judgement.
+- Medium-risk: use judgement only about whether Codex review is needed. This
+  never permits choosing an unresolved business rule; the hard stop above
+  still applies.
 - Low-risk: skip unless requested.
 - When preparing a Codex review packet, use `.ai/review-packet-template.md` if it exists.
 
@@ -193,6 +241,8 @@ After two failed repair attempts, stop, summarize the remaining failure, and ask
 
 Stop and report (do not proceed) when:
 - An invariant would be violated by proceeding.
+- The issue contains an unresolved material business, legal, privacy, pricing,
+  refund, compensation, or accounting decision.
 - Uncommitted user-owned changes would be overwritten.
 - CI is failing after two repair attempts — summarize the remaining failure.
 - `playwright-cli` verification is required but cannot run or fails — report the exact failure.
