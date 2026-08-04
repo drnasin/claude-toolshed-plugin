@@ -16,6 +16,26 @@ If the user asks only to investigate, explain, estimate, or plan — do not edit
 
 ---
 
+## User-facing communication
+
+Write every user-visible progress update, plan, decision, review summary, and
+final report in clear, natural Croatian. Do not relay raw wording from source
+code, invariants, review agents, or internal notes when it would be difficult
+for the user to understand.
+
+- Use complete sentences with one main idea each. State what will change, how
+  it works, and why it matters in practice.
+- Concise means omitting irrelevant detail, not compressing several ideas into
+  dense expert shorthand.
+- Avoid Croatian-English hybrids and unexplained expressions such as "repo
+  claim idiom", "atomic conditional UPDATE", or "lock-ordering invariant".
+  Keep exact identifiers when useful, then explain the underlying behavior in
+  plain Croatian.
+- Rewrite subagent and review output before showing it to the user. Never paste
+  internal shorthand verbatim merely because it is technically accurate.
+
+---
+
 ## Source of truth
 
 The issue body, comments, labels, linked PRs, and acceptance criteria define the goal.
